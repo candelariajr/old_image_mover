@@ -75,7 +75,7 @@ function outputJSONData($result){
         echo json_encode(array("data" => $resultsOutput));
     }
     else{
-        echo json_encode(array("Error Message" => "Not a valid MySQLi Object!"));
+        echo json_encode(array("errorMessage" => "Not a valid MySQLi Object!"));
     }
 }
 
