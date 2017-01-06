@@ -49,20 +49,35 @@ function startQuery(){
         writeErrorMessage("No Results");
     }
     else{
+        outputJSONData($result);
+    }
+}
+
+/*
+ * And behold the only decent code in this project.
+ * This takes any dataset from any query and puts it into JSON
+ * This was written at 1am after 5 beers and 2 coffees.
+ * */
+function outputJSONData($result){
+    if(get_class($result) == "mysqli_result"){
         $columns = array();
+        $resultsOutput = array();
         while($property = mysqli_fetch_field($result)){
             $columns[] = $property->name;
         }
         while($row = $result->fetch_assoc()){
+            $resultRow = array();
             for($i = 0; $i < sizeof($columns); $i++){
-                //echo $row[$columns[$i]]. " ";
-                $json_encode(array());
+                $resultRow[$columns[$i]] = $row[$columns[$i]];
             }
+            array_push($resultsOutput, $resultRow);
         }
+        echo json_encode(array("data" => $resultsOutput));
+    }
+    else{
+        echo json_encode(array("Error Message" => "Not a valid MySQLi Object!"));
     }
 }
-
-$dataArray = [];
 
 function appendDisplayItem($item){
 
@@ -70,5 +85,10 @@ function appendDisplayItem($item){
 
 function writeErrorMessage($messageString){
     echo json_encode(array("message" => $messageString));
+}
+
+function array_push_assoc($array, $key, $value){
+    $array[$key] = $value;
+    return $array;
 }
 
