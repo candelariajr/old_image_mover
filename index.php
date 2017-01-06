@@ -36,6 +36,14 @@
 </head>
 <body>
 <div id="masterContainer">
+    <div id =controlPanel>
+        <div id="floorSelection">
+
+        </div>
+        <div id="tableSelection">
+
+        </div>
+    </div>
     <div id="floorName">
         Floor <span id="floorNumber"></span> <span id="scope"></span>
     </div>
@@ -82,10 +90,10 @@
             </tr>
         </table>
     </div>
-    <div id = "tablec" class="tableContainer testing">
+    <div id = "tablec" class="tableContainer">
         <table class="editTable">
             <tr>
-                <td rowspan="3">More Things and Whatnot</td>
+                <td rowspan="3"><input type="text"></td>
                 <td class="xyLabel">X</td>
                 <td class="button">-</td>
                 <td class="valueContainer">44</td>
@@ -106,6 +114,20 @@
 </body>
 </html>
 <script>
+    /*
+     * ===============================================================================================
+     * START!
+     * ===============================================================================================
+     * */
+    (function(){
+        //get floor selections
+
+    })();
+
+
+
+
+
     /*
     * ===============================================================================================
     * TEST CODE
@@ -129,6 +151,18 @@
     createEntity("table7", 13, 9);
 
 
+    function createFloor(name){
+        var button = document.createElement('div');
+        button.innerHTML = name;
+        button.className = "button";
+        document.getElementById("floorSelection").appendChild(button);
+    }
+
+
+    function selectFloor(selection){
+
+    }
+
 
     /*
     * ===============================================================================================
@@ -148,6 +182,7 @@
         var firstRow = createTr();
         var mainLabel = createTd(null, name);
         mainLabel.rowSpan = "3";
+        mainLabel.id = "entity" + entity;
         firstRow.appendChild(mainLabel);
         firstRow.appendChild(createTd("xyLabel", "X", null));
 
@@ -245,7 +280,11 @@
         document.getElementById("masterContainer").style.display = "none";
         document.body.backgroundColor="grey";
         for(var i=0; i < setArray.length; i++){
-            alert(setArray[i]);
+            var setString = "";
+
+            setString += "Entity: " + document.getElementById("entity" + setArray[i]).innerHTML + "\n";
+            setString += "X: " + document.getElementById("xval" + setArray[i]).innerHTML + " Y: " + document.getElementById("yval" + setArray[i]).innerHTML;
+            alert(setString);
         }
         document.body.backgroundColor="white";
         document.getElementById("masterContainer").style.display = "block";

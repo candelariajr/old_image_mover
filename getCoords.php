@@ -8,6 +8,7 @@
 
 $floor = "";
 $table = "";
+$getFloors = "";
 $getAccepted = false;
 
 require_once("dbauth.config");
@@ -18,6 +19,10 @@ if(isset($_GET['floor'])){
 if(isset($_GET['floor']) && isset($_GET['table'])){
     $floor = preg_replace("/[^A-Za-z0-9]/", '', $_GET['floor']);
     $table = preg_replace("/[^A-Za-z0-9]/", '', $_GET['table']);
+    $getAccepted = true;
+}
+if(isset($_GET['floors'])){
+    $floors = preg_replace("/[^A-Za-z0-9]/", '', $_GET['floors']);
     $getAccepted = true;
 }
 if(!$getAccepted){
@@ -31,6 +36,7 @@ function startQuery(){
     GLOBAL $password;
     GLOBAL $database;
     GLOBAL $floor;
+    GLOBAL $getFloors;
     GLOBAL $table;
     $conn = new mysqli("localhost", $user, $password, $database);
     if(mysqli_connect_errno()){
@@ -39,9 +45,12 @@ function startQuery(){
     }else{
         //writeErrorMessage("Connected!");
     }
-    if($table == ""){
+    if($table == "" && $getFloors == ""){
         $queryString = "SELECT table_name, left_pos, top_pos from computer_availability.compstatus where floor = \"$floor\"";
-    }else{
+    }else if($floor != "" && $getFloors = ""){
+        $queryString = "SELECT DISTINCT floor from computer_availability.compstatus";
+    }
+    else{
         $queryString = "SELECT computer_name, left_pos, top_pos from computer_availability.compstatus where floor = \"$floor\" and table_name = \"$table\"";
     }
     $result = $conn->query($queryString);
@@ -77,10 +86,6 @@ function outputJSONData($result){
     else{
         echo json_encode(array("errorMessage" => "Not a valid MySQLi Object!"));
     }
-}
-
-function appendDisplayItem($item){
-
 }
 
 function writeErrorMessage($messageString){
