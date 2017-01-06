@@ -55,7 +55,7 @@ function startQuery(){
 
 /*
  * And behold the only decent code in this project.
- * This takes any dataset from any query and puts it into JSON
+ * This takes any mysqli result set from any query and puts it into JSON
  * This was written at 1am after 5 beers and 2 coffees.
  * */
 function outputJSONData($result){
