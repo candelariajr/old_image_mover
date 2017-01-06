@@ -5,7 +5,10 @@
  * Date: 1/5/2017
  * Time: 12:13 PM
  *
- * WARNING: UNDOCUMENTED SPAGHETTI CREATED FOR DATA GENERATION. DO NOT READ THIS CODE. DO NOT TRACE THIS
+ * Throwaway editor put together quickly to edit the data. This is to help get the data points put
+ * in correctly while we finish the Vue.Js frontend.
+ *
+ * WARNING: UNDOCUMENTED SPAGHETTI CREATED FOR DATA GENERATION ONLY. DO NOT READ THIS CODE. DO NOT TRACE THIS
  * CODE. DO NOT THINK ABOUT THIS CODE. THERE IS NO SPOON. THERE IS NO SUPPORT. THIS IS A QUICK THROWAWAY
  * MESS.
  *
@@ -130,6 +133,7 @@
     /*
     * ===============================================================================================
     * THIS IS FOR THE CREATION OF ENTITIES ONLY!
+    * UNSTABLE SPAGHETTI: Modify at your own paril!
     * ===============================================================================================
     * */
 
