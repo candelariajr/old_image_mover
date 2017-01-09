@@ -5,12 +5,10 @@
  * Date: 1/5/2017
  * Time: 8:01 PM
  */
-
 $floor = "";
 $table = "";
 $getFloors = "";
 $getAccepted = false;
-
 require_once("dbauth.config");
 if(isset($_GET['floor'])){
     $floor = preg_replace("/[^A-Za-z0-9]/", '', $_GET['floor']);
@@ -22,7 +20,7 @@ if(isset($_GET['floor']) && isset($_GET['table'])){
     $getAccepted = true;
 }
 if(isset($_GET['floors'])){
-    $floors = preg_replace("/[^A-Za-z0-9]/", '', $_GET['floors']);
+    $getFloors = preg_replace("/[^A-Za-z0-9]/", '', $_GET['floors']);
     $getAccepted = true;
 }
 if(!$getAccepted){
@@ -30,7 +28,6 @@ if(!$getAccepted){
 }else{
     startQuery();
 }
-
 function startQuery(){
     GLOBAL $user;
     GLOBAL $password;
@@ -46,8 +43,8 @@ function startQuery(){
         //writeErrorMessage("Connected!");
     }
     if($table == "" && $getFloors == ""){
-        $queryString = "SELECT table_name, left_pos, top_pos from computer_availability.compstatus where floor = \"$floor\"";
-    }else if($floor != "" && $getFloors = ""){
+        $queryString = "SELECT table_name, left_pos, top_pos from computer_availability.compstatus where floor = \"$floor\" GROUP BY table_name ORDER BY table_name ASC";
+    }else if($floor == "" && $getFloors != ""){
         $queryString = "SELECT DISTINCT floor from computer_availability.compstatus";
     }
     else{
@@ -61,7 +58,6 @@ function startQuery(){
         outputJSONData($result);
     }
 }
-
 /*
  * And behold the only decent code in this project.
  * This takes any dataset from any query and puts it into JSON
@@ -87,13 +83,10 @@ function outputJSONData($result){
         echo json_encode(array("errorMessage" => "Not a valid MySQLi Object!"));
     }
 }
-
 function writeErrorMessage($messageString){
     echo json_encode(array("message" => $messageString));
 }
-
 function array_push_assoc($array, $key, $value){
     $array[$key] = $value;
     return $array;
 }
-
