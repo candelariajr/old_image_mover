@@ -31,17 +31,24 @@
         .editTable{border:1px solid black;}
         .tableContainer{display:inline-block; margin:4px;}
         .testing{display:none}
-        #tableName{display:none}
+        .label{width:100px}
+        .originalValueContainer{display:none}
+        #successPane{float:left; padding-left:100px; display-inline; position:fixed; z-index: 1;}
     </style>
 </head>
 <body>
 <div id="masterContainer">
+    <div id =controlPanel>
+        <div id="successPane"></div>
+        <div id="floorSelection"></div>
+        <div id="tableSelection"></div>
+        <div id="testPanel"></div>
+    </div>
     <div id="floorName">
         Floor <span id="floorNumber"></span> <span id="scope"></span>
     </div>
-    <div id="tableName">
-        Table
-    </div>
+    <div id="tableName"></div>
+    <div id="tables"></div>
     <div id = "tablea" class="tableContainer testing">
         <table class="editTable">
             <tr>
@@ -85,7 +92,7 @@
     <div id = "tablec" class="tableContainer testing">
         <table class="editTable">
             <tr>
-                <td rowspan="3">More Things and Whatnot</td>
+                <td rowspan="3"><input type="text"></td>
                 <td class="xyLabel">X</td>
                 <td class="button">-</td>
                 <td class="valueContainer">44</td>
@@ -107,18 +114,33 @@
 </html>
 <script>
     /*
-    * ===============================================================================================
-    * TEST CODE
-    * ===============================================================================================
-    * */
+     * ===============================================================================================
+     * START!
+     * ===============================================================================================
+     * */
+    (function(){
+        //get floor selections
+        getFloors();
+    })();
+
+
+
+
+
+    /*
+     * ===============================================================================================
+     * TEST CODE
+     * ===============================================================================================
+     * */
     //placeholder code
-    document.getElementById("floorNumber").innerHTML = "1";
-    document.getElementById("scope").innerHTML = "tables";
+
+    //ocument.getElementById("scope").innerHTML = "tables";
 
 
     var entity = 0;
     var setArray = [];
     // This is all for createEntity:
+    /*
 
     createEntity("table1", 44, 22);
     createEntity("table2", 33, 21);
@@ -127,15 +149,123 @@
     createEntity("table5", 10, 20);
     createEntity("table6", 17, 2);
     createEntity("table7", 13, 9);
+    */
+    /*
+     * ===============================================================================================
+     * THIS IS FOR THE MANAGEMENT OF FLOOR ENTITIES ONLY!
+     * UNSTABLE SPAGHETTI: Modify at your own paril!
+     * ===============================================================================================
+     * */
+    function getFloors(){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                setFloors(this.responseText);
+            }
+        };
+        xhttp.open("GET", "getCoords.php?floors=true", true);
+        xhttp.send();
+    }
 
+    function setFloors(data){
+        var parsedData = JSON.parse(data);
+        for(i = 0; i < parsedData.data.length; i++){
+            createFloor(parsedData.data[i].floor);
+        }
+    }
+
+    function createFloor(name){
+        setArray = [];
+        var button = document.createElement('div');
+        button.innerHTML = name;
+        button.className = "button";
+        button.setAttribute("onclick", "selectFloor("+name+")");
+        document.getElementById("floorSelection").appendChild(button);
+    }
+
+
+    function selectFloor(selection){
+        document.getElementById("tableName").innerHTML = "";
+        document.getElementById("floorNumber").innerHTML = selection;
+        getTables(document.getElementById("floorNumber").innerHTML);
+    }
+
+    /*
+     * ===============================================================================================
+     * THIS IS FOR THE MANAGEMENT OF TABLE ENTITIES ONLY!
+     * UNSTABLE SPAGHETTI: Modify at your own paril!
+     * ===============================================================================================
+     * */
+    function getTables(floor){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                setTables(this.responseText);
+            }
+        };
+        xhttp.open("GET", "getCoords.php?floor=" + floor, true);
+        xhttp.send();
+    }
+
+    function setTables(name){
+        setArray = [];
+        var parsedData = JSON.parse(name);
+        var myNode = document.getElementById("tables");
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.firstChild);
+        }
+        for(i = 0; i < parsedData.data.length; i++){
+            createEntity(parsedData.data[i].table_name, parsedData.data[i].left_pos, parsedData.data[i].top_pos);
+        }
+    }
+
+    /*
+     * ===============================================================================================
+     * THIS IS FOR THE MANAGEMENT OF INDIVIDUAL ENTITIES ONLY!
+     * UNSTABLE SPAGHETTI: Modify at your own paril!
+     * ===============================================================================================
+     * */
+    function getEntities(table, floor){
+        //alert(table + " " + floor);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                setEntities(this.responseText);
+            }
+        };
+        document.getElementById("tableName").innerHTML=(table);
+        xhttp.open("GET", "getCoords.php?floor=" + floor + "&table=" + table, true);
+        xhttp.send();
+    }
+
+    function setEntities(name){
+        setArray = [];
+        var parsedData = JSON.parse(name);
+        var myNode = document.getElementById("tables");
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.firstChild);
+        }
+        for(i = 0; i < parsedData.data.length; i++){
+            createEntity(parsedData.data[i].computer_name, parsedData.data[i].left_pos, parsedData.data[i].top_pos);
+        }
+        /**
+         *
+         * 2am edit:
+         * Note! That when you click on the computer entity, you are taken to a blank page.
+         * This is the result of trying to run getEntities where computers are at table of name = computername
+         * eg: floor 2 get entities: table109, 2 (get computers at table109, floor 2)
+         * on the next layer:
+         * get computers at table computer name, 2
+         * */
+    }
 
 
     /*
-    * ===============================================================================================
-    * THIS IS FOR THE CREATION OF ENTITIES ONLY!
-    * UNSTABLE SPAGHETTI: Modify at your own paril!
-    * ===============================================================================================
-    * */
+     * ===============================================================================================
+     * THIS IS FOR THE CREATION OF ENTITIES ONLY!
+     * UNSTABLE SPAGHETTI: Modify at your own paril!
+     * ===============================================================================================
+     * */
 
     function createEntity(name, xCoord, yCoord){
         var masterElement = document.createElement('div');
@@ -147,7 +277,18 @@
         //create first row
         var firstRow = createTr();
         var mainLabel = createTd(null, name);
+        mainLabel.className = "label";
         mainLabel.rowSpan = "3";
+        mainLabel.id = "entity" + entity;
+        //FIX THIS!!
+        if(document.getElementById("floorName").innerHTML != ""){
+            //mainLabel.setAttribute("onclick", "getEntities("+ name +","+ document.getElementById("floorNumber")+")");
+            mainLabel.onclick = function(){
+                getEntities(name, document.getElementById("floorNumber").innerHTML);
+            }
+        }else{
+            //handle this! textbox computer name!
+        }
         firstRow.appendChild(mainLabel);
         firstRow.appendChild(createTd("xyLabel", "X", null));
 
@@ -158,6 +299,7 @@
         firstRow.appendChild(xDecrement);
         firstRow.appendChild(createTd("valueContainer", xCoord, "xval"));
         //firstRow.appendChild(createTd("button", "+", null));
+        firstRow.appendChild(createTd("originalValueContainer", xCoord, "originalxval"));
         var xIncrement = createTd("button", "+", null);
         xIncrement.setAttribute("onclick", "incrementx(" + entity + ")");
         firstRow.appendChild(xIncrement);
@@ -174,10 +316,12 @@
         //thirdRow.appendChild(createTd("button", "-"), null);
         //thirdRow.appendChild(createTd("valueContainer", yCoord, null));
         //thirdRow.appendChild(createTd("button", "+", null));
+
         var yDecrement = createTd("button", "-", null);
         yDecrement.setAttribute("onclick", "decrementy(" + entity + ")");
         thirdRow.appendChild(yDecrement);
         thirdRow.appendChild(createTd("valueContainer", yCoord, "yval"));
+        thirdRow.appendChild(createTd("originalValueContainer", yCoord, "originalyval"));
 
         var yIncrement = createTd("button", "+", null);
         yIncrement.setAttribute("onclick", "incrementy(" + entity + ")");
@@ -188,7 +332,7 @@
         masterTable.appendChild(secondRow);
         masterTable.appendChild(thirdRow);
         masterElement.appendChild(masterTable);
-        document.getElementById("masterContainer").appendChild(masterElement);
+        document.getElementById("tables").appendChild(masterElement);
         entity++;
     }
 
@@ -214,6 +358,7 @@
         if(newNumber < 900) {
             document.getElementById("xval" + element).innerHTML = newNumber;
         }
+        clearSuccess();
         addSet(element);
     }
 
@@ -222,6 +367,7 @@
         if(newNumber > 0){
             document.getElementById("xval" + element).innerHTML = newNumber;
         }
+        clearSuccess();
         addSet(element);
     }
 
@@ -230,6 +376,7 @@
         if(newNumber < 900) {
             document.getElementById("yval" + element).innerHTML = newNumber;
         }
+        clearSuccess();
         addSet(element);
     }
 
@@ -238,21 +385,67 @@
         if(newNumber > 0){
             document.getElementById("yval" + element).innerHTML = newNumber;
         }
+        clearSuccess();
         addSet(element);
+    }
+
+    function clearSuccess(){
+        document.getElementById("successPane").innerHTML = "";
+    }
+
+    function setSuccess(success){
+        if(success){
+            document.getElementById("successPane").innerHTML = "Update successful";
+        }else{
+            document.getElementById("successPane").innerHTML = "Update failed";
+        }
     }
 
     function set(selectedEntity){
         document.getElementById("masterContainer").style.display = "none";
         document.body.backgroundColor="grey";
         for(var i=0; i < setArray.length; i++){
-            alert(setArray[i]);
+            //var setString = "";
+
+            //setString += "Entity: " + document.getElementById("entity" + setArray[i]).innerHTML + "\n";
+            //setString += "X: " + document.getElementById("xval" + setArray[i]).innerHTML + " Y: " + document.getElementById("yval" + setArray[i]).innerHTML + "\n";
+            var xdif = (parseInt(document.getElementById("xval" + setArray[i]).innerHTML) - parseInt(document.getElementById("originalxval" + setArray[i]).innerHTML));
+            var ydif =(parseInt(document.getElementById("yval" + setArray[i]).innerHTML) - parseInt(document.getElementById("originalyval" + setArray[i]).innerHTML));
+            var name = document.getElementById("entity" + setArray[i]).innerHTML;
+            var x = xdif;
+            var y = ydif;
+            var table = document.getElementById('tableName').innerHTML;
+            var floor = document.getElementById("floorNumber").innerHTML;
+            if(table == ""){
+                var moving = "table";
+            }
+            else{
+                var moving = "computer";
+            }
+            updateEntity(name, x, y, table, floor, moving);
         }
+        setArray = [];
         document.body.backgroundColor="white";
         document.getElementById("masterContainer").style.display = "block";
+        redraw(table, floor);
     }
 
-    function update(element){
+    function redraw(table, floor){
+        //alert("table " + table + "\nfloor " + floor);
+        if(table != undefined && floor != undefined){
+            if(table == ""){
+                getTables(floor);
+            }
+            else{
+                getEntities(table, floor);
+            }
+        }
+    }
 
+    function updateEntity(name, x, y, table, floor, moving){
+        var movingString = "Name: " + name + "\nX: " + x + "\nY: " + y + "\ntable: " + table + "\nfloor: " + floor + "\nmoving: " + moving;
+        //alert(movingString);
+        setSuccess(true);
     }
 
     function addSet(element){
