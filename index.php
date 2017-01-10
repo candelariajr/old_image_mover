@@ -33,7 +33,7 @@
         .testing{display:none}
         .label{width:100px}
         .originalValueContainer{display:none}
-        #successPane{float:left; padding-left:100px; display-inline; position:fixed; z-index: 1;}
+        #successPane{float:left; left:100px; display-inline; position:fixed; z-index: 1;}
     </style>
 </head>
 <body>
