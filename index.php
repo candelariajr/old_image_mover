@@ -444,8 +444,17 @@
 
     function updateEntity(name, x, y, table, floor, moving){
         var movingString = "Name: " + name + "\nX: " + x + "\nY: " + y + "\ntable: " + table + "\nfloor: " + floor + "\nmoving: " + moving;
-        //alert(movingString);
-        setSuccess(true);
+        alert(movingString);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("testPanel").innerHTML = this.responseText;
+                setSuccess(true);
+            }
+        };
+        document.getElementById("tableName").innerHTML=(table);
+        xhttp.open("GET", "update.php?name=" + name + "&x=" + x + "&y=" + y + "&table=" + table + "&floor=" + floor + "&moving=" + moving, true);
+        xhttp.send();
     }
 
     function addSet(element){
