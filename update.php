@@ -34,11 +34,20 @@
  *
  *
   */
+require("dbauth.config");
+$conn = new mysqli("localhost", $user, $password, $database);
+if(mysqli_connect_errno()){
+    echo "Failed!".mysqli_connect_error();
+}else{
+    //echo "Success!";
+}
 
-
+$debug = 0;
 //showParams();
+if($debug == 1){
+    checkSet();
+}
 
-//checkSet();
 function checkSet(){
     if(!isset($_GET['name'])){
         echo "name not set<br>";
@@ -62,15 +71,47 @@ function checkSet(){
 
 
 if($_GET['moving'] == "table"){
-    echo "Name ".$_GET['name']."<br>";
-    echo "X ".$_GET['x']."<br>";
-    echo "Y ".$_GET['y']."<br>";
-    echo "Floor ".$_GET['floor']."<br>";
+    if($debug == 1){
+        echo "Name ".$_GET['name']."<br>";
+        echo "X ".$_GET['x']."<br>";
+        echo "Y ".$_GET['y']."<br>";
+        echo "Floor ".$_GET['floor']."<br>";
+    }
+    $x = $_GET['x'];
+    $y = $_GET['y'];
+    $floor = $_GET['floor'];
+    $name = $_GET['name'];
+    if($x != "0"){
+        $queryStringx = "update computer_availability.compstatus set left_pos = left_pos + $x where floor = $floor and table_name = '$name'";
+        //echo $queryStringx."<br>";
+        mysqli_query($conn, $queryStringx);
+    }
+    if($y != "0") {
+        $queryStringy = "update computer_availability.compstatus set top_pos = top_pos + $y where floor = $floor and table_name = '$name'";
+        //echo $queryStringy."<br>";
+        mysqli_query($conn, $queryStringy);
+    }
 }
 
 if($_GET['moving'] == "computer"){
-    echo $_GET['name']."<br>";
-    echo $_GET['x']."<br>";
-    echo $_GET['y']."<br>";
+    if($debug == 1){
+        echo $_GET['name']."<br>";
+        echo $_GET['x']."<br>";
+        echo $_GET['y']."<br>";
+    }
+    $x = $_GET['x'];
+    $y = $_GET['y'];
+    $name = $_GET['name'];
+    if($x != "0") {
+        $queryStringx = "update computer_availability.compstatus set left_pos = left_pos + $x where computer_name = '$name'";
+        //echo $queryStringx."<br>";
+        mysqli_query($conn, $queryStringx);
+    }
+    if($y != "0") {
+        $queryStringy = "update computer_availability.compstatus set top_pos = top_pos + $y where computer_name = '$name'";
+        //echo $queryStringy."<br>";
+        mysqli_query($conn, $queryStringy);
+    }
 }
 
+mysqli_close($conn);

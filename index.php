@@ -444,7 +444,7 @@
 
     function updateEntity(name, x, y, table, floor, moving){
         var movingString = "Name: " + name + "\nX: " + x + "\nY: " + y + "\ntable: " + table + "\nfloor: " + floor + "\nmoving: " + moving;
-        alert(movingString);
+        //alert(movingString);
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -455,6 +455,7 @@
         document.getElementById("tableName").innerHTML=(table);
         xhttp.open("GET", "update.php?name=" + name + "&x=" + x + "&y=" + y + "&table=" + table + "&floor=" + floor + "&moving=" + moving, true);
         xhttp.send();
+        redraw(table, floor);
     }
 
     function addSet(element){
