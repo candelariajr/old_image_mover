@@ -34,6 +34,7 @@
         .label{width:100px}
         .originalValueContainer{display:none}
         #successPane{float:left; left:100px; display-inline; position:fixed; z-index: 1;}
+        #editNamesButton{text-align:center; background-color:#42f4b9; border:1px solid black; cursor:pointer; user-select:none; width: 200px}}
     </style>
 </head>
 <body>
@@ -48,6 +49,7 @@
         Floor <span id="floorNumber"></span> <span id="scope"></span>
     </div>
     <div id="tableName"></div>
+    <hr>
     <div id="tables"></div>
     <div id = "tablea" class="tableContainer testing">
         <table class="editTable">
@@ -172,6 +174,7 @@
         for(i = 0; i < parsedData.data.length; i++){
             createFloor(parsedData.data[i].floor);
         }
+        document.getElementById("controlPanel").appendChild(document.createElement("br"));
     }
 
     function createFloor(name){
@@ -187,6 +190,16 @@
     function selectFloor(selection){
         document.getElementById("tableName").innerHTML = "";
         document.getElementById("floorNumber").innerHTML = selection;
+        if(document.getElementById("editNamesButton") != undefined) {
+            document.getElementById("controlPanel").removeChild(document.getElementById("editNamesButton"));
+        }
+        var editNamesButton = document.createElement("div");
+        editNamesButton.innerHTML = "Edit Table Names";
+        editNamesButton.id ="editNamesButton";
+        editNamesButton.onclick = function(){
+            editEntityNames(selection, null);
+        };
+        document.getElementById("controlPanel").appendChild(editNamesButton);
         getTables(document.getElementById("floorNumber").innerHTML);
     }
 
@@ -240,6 +253,17 @@
 
     function setEntities(name){
         setArray = [];
+        if(document.getElementById("editNamesButton") != undefined) {
+            document.getElementById("controlPanel").removeChild(document.getElementById("editNamesButton"));
+        }
+        var editNamesButton = document.createElement("div");
+        editNamesButton.innerHTML = "Edit Computer Info";
+        editNamesButton.id ="editNamesButton";
+        editNamesButton.onclick = function(){
+            editEntityNames(document.getElementById("floorNumber").innerHTML,
+                document.getElementById("tableName").innerHTML);
+        };
+        document.getElementById("controlPanel").appendChild(editNamesButton);
         var parsedData = JSON.parse(name);
         var myNode = document.getElementById("tables");
         while (myNode.firstChild) {
@@ -281,7 +305,7 @@
         mainLabel.rowSpan = "3";
         mainLabel.id = "entity" + entity;
         //FIX THIS!!
-        if(document.getElementById("floorName").innerHTML != ""){
+        if(document.getElementById("floorNumber").innerHTML != ""){
             //mainLabel.setAttribute("onclick", "getEntities("+ name +","+ document.getElementById("floorNumber")+")");
             mainLabel.onclick = function(){
                 getEntities(name, document.getElementById("floorNumber").innerHTML);
@@ -450,18 +474,36 @@
             if (this.readyState == 4 && this.status == 200) {
                 document.getElementById("testPanel").innerHTML = this.responseText;
                 setSuccess(true);
+                redraw(table, floor);
             }
         };
         document.getElementById("tableName").innerHTML=(table);
         xhttp.open("GET", "update.php?name=" + name + "&x=" + x + "&y=" + y + "&table=" + table + "&floor=" + floor + "&moving=" + moving, true);
         xhttp.send();
-        redraw(table, floor);
     }
 
     function addSet(element){
         if(setArray.indexOf(element) < 0){
             setArray.push(element);
         }
+    }
+
+    function editEntityNames(floor, table){
+        if(table == null && floor != null){
+            alert("Editing tables of: " + floor);
+            for(var i = 0; i < document.getElementById("tables").childNodes.length; i++){
+
+            }
+            alert(document.getElementById("tables").childNodes.length);
+        }
+        else{
+            alert("Editing computers of table: " + table + " On floor: " + floor);
+        }
+    }
+
+
+    function creatFormEntity(){
+
     }
 
 </script>
